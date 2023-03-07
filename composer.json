@@ -1,0 +1,28 @@
+{
+  "name": "drupal/webnewsletter",
+  "description": "",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "minimum-stability": "dev",
+  "authors": [
+    {
+      "name": "Webship",
+      "homepage": "http://webship.org",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/webnewsletter",
+    "source": "http://cgit.drupalcode.org/webnewsletter"
+  },
+  "repositories": {
+    "drupal": {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  },
+  "require": {
+    "drupal/core": "~10.0",
+    "drupal/webform": "~6.0"
+  }
+}
