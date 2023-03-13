@@ -1,0 +1,11 @@
+administer web newsletter emails:
+  title: 'Administer web newsletter emails settings'
+  restrict access: true
+delete web newsletter emails:
+  title: Delete web newsletter emails
+create web newsletter emails:
+  title: Create web newsletter emails
+view web newsletter emails:
+  title: View web newsletter emails
+edit web newsletter emails:
+  title: Edit web newsletter emails

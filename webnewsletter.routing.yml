@@ -1,0 +1,7 @@
+entity.webnewsletter_emails.settings:
+  path: 'admin/structure/webnewsletter-emails'
+  defaults:
+    _form: '\Drupal\webnewsletter\Form\WebnewsletterEmailsSettingsForm'
+    _title: 'Web Newsletter Emails'
+  requirements:
+    _permission: 'administer web newsletter emails'

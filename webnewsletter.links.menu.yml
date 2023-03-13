@@ -1,0 +1,10 @@
+entity.webnewsletter_emails.settings:
+  title: 'Web Newsletter Emails'
+  description: 'Configure a Web Newsletter Emails entity type.'
+  route_name:  entity.webnewsletter_emails.settings
+  parent: system.admin_structure
+entity.webnewsletter_emails.collection:
+  title: 'Web Newsletter Emailss'
+  description: 'List of web newsletter emailss.'
+  route_name: entity.webnewsletter_emails.collection
+  parent: system.admin_content

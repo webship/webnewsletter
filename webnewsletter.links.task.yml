@@ -1,0 +1,22 @@
+entity.webnewsletter_emails.settings:
+  title: 'Settings'
+  route_name: entity.webnewsletter_emails.settings
+  base_route: entity.webnewsletter_emails.settings
+entity.webnewsletter_emails.view:
+  title: 'View'
+  route_name: entity.webnewsletter_emails.canonical
+  base_route: entity.webnewsletter_emails.canonical
+entity.webnewsletter_emails.edit_form:
+  title: 'Edit'
+  route_name: entity.webnewsletter_emails.edit_form
+  base_route: entity.webnewsletter_emails.canonical
+entity.webnewsletter_emails.delete_form:
+  title: 'Delete'
+  route_name: entity.webnewsletter_emails.delete_form
+  base_route: entity.webnewsletter_emails.canonical
+  weight: 10
+entity.webnewsletter_emails.collection:
+  title: 'Web Newsletter Emailss'
+  route_name: entity.webnewsletter_emails.collection
+  base_route: system.admin_content
+  weight: 10

@@ -1,0 +1,5 @@
+webnewsletter_emails.add_form:
+  title: 'Add web newsletter emails'
+  route_name: entity.webnewsletter_emails.add_form
+  appears_on:
+    - entity.webnewsletter_emails.collection
