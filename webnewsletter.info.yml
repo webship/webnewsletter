@@ -1,6 +1,6 @@
 name: Web Newsletter
-description: ''
+description: Simplifies the management of newsletter subscriptions, effortlessly engage your audience through effective newsletter campaigns.
 type: module
-core_version_requirement: ~10.1.0
+core_version_requirement: ~10.2.0
 dependencies:
   - webform:webform

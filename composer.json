@@ -1,6 +1,6 @@
 {
   "name": "drupal/webnewsletter",
-  "description": "",
+  "description": "Simplifies the management of newsletter subscriptions, effortlessly engage your audience through effective newsletter campaigns.",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
   "minimum-stability": "dev",
@@ -22,7 +22,8 @@
     }
   },
   "require": {
-    "drupal/core": "~10.1.0",
-    "drupal/webform": "~6.0"
+    "drupal/core": "~10.2.0",
+    "drupal/webpatches": "~10.0",
+    "drupal/webform": "~6.2.0"
   }
 }
