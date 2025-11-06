@@ -5,6 +5,10 @@ include:
       - "/includes/include.drupalci.main.yml"
       - "/includes/include.drupalci.variables.yml"
       - "/includes/include.drupalci.workflows.yml"
+
+variables:
+  _LENIENT_ALLOW_LIST: "webpatches"
+
 cspell:
   stage: validate
   image: node:18
