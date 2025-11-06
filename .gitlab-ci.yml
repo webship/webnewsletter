@@ -1,52 +1,36 @@
----
-##############################################################################
+################
+# GitLabCI template for Drupal Web Newsletter module.
 #
-#  Drupal GitLab CI template for Web Newsletter module
-#
-#  Based on the official Drupal Association template from:
-#  https://git.drupalcode.org/project/gitlab_templates
-#
-##############################################################################
+# This template is designed to give any Contrib maintainer everything they need to test, without requiring modification.
+# It is also designed to keep up to date with Core Development automatically through the use of include files that can be centrally maintained.
+# As long as you include the project, ref and three files below, any future updates added by the Drupal Association will be used in your
+# pipelines automatically. However, you can modify this template if you have additional needs for your project.
+# The full documentation is on https://project.pages.drupalcode.org/gitlab_templates/
+################
 
 include:
-  - project: 'project/gitlab_templates'
-    ref: '1.7.0'
+  ################
+  # DrupalCI includes:
+  # As long as you include this, any future includes added by the Drupal Association will be accessible to your pipelines automatically.
+  # View these include files at https://git.drupalcode.org/project/gitlab_templates/
+  ################
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
     file:
       - '/includes/include.drupalci.main.yml'
       - '/includes/include.drupalci.variables.yml'
       - '/includes/include.drupalci.workflows.yml'
 
-# Uncomment this line for Drupal 7 projects
-# - '/includes/include.drupalci.main-d7.yml'
-
-##############################################################################
+################
+# Pipeline configuration variables
 #
-# Variables
+# These are the variables provided to the Run Pipeline form that a user may want to override.
 #
-# Customize your pipeline by overriding variables here.
-# For a full list of available variables, see:
-# https://git.drupalcode.org/project/gitlab_templates/-/blob/main/includes/include.drupalci.variables.yml
-#
-##############################################################################
+# Docs at https://git.drupalcode.org/project/gitlab_templates/-/blob/main/includes/include.drupalci.variables.yml
+################
 
 variables:
   # Opt-in to test against Drupal next minor version
   OPT_IN_TEST_NEXT_MINOR: 1
-
-  # Skip jobs that are not needed (set to 1 to skip)
-  # SKIP_PHPCS: 1
-  # SKIP_PHPSTAN: 1
-  # SKIP_ESLINT: 1
-  # SKIP_STYLELINT: 1
-
-# Uncomment below to customize specific jobs
-# Example: Make phpcs job fail the pipeline
-# phpcs:
-#   allow_failure: false
-
-# Example: Add custom configuration to phpunit
-# phpunit:
-#   script:
-#     - echo "Running custom PHPUnit configuration"
-#     - !reference [.default-job-before-script]
-#     - cd "$CI_PROJECT_DIR/$_WEB_ROOT/modules/custom/$CI_PROJECT_NAME"
+  # Opt-in to test against previous Drupal major version
+  OPT_IN_TEST_PREVIOUS_MAJOR: 1
