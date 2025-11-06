@@ -9,8 +9,8 @@
 ##############################################################################
 
 include:
-  - project: $_GITLAB_TEMPLATES_REPO
-    ref: $_GITLAB_TEMPLATES_REF
+  - project: 'project/gitlab_templates'
+    ref: '1.7.0'
     file:
       - '/includes/include.drupalci.main.yml'
       - '/includes/include.drupalci.variables.yml'
