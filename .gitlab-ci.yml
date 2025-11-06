@@ -1,19 +1,4 @@
-################
-# GitLabCI template for Drupal Web Newsletter module.
-#
-# This template is designed to give any Contrib maintainer everything they need to test, without requiring modification.
-# It is also designed to keep up to date with Core Development automatically through the use of include files that can be centrally maintained.
-# As long as you include the project, ref and three files below, any future updates added by the Drupal Association will be used in your
-# pipelines automatically. However, you can modify this template if you have additional needs for your project.
-# The full documentation is on https://project.pages.drupalcode.org/gitlab_templates/
-################
-
 include:
-  ################
-  # DrupalCI includes:
-  # As long as you include this, any future includes added by the Drupal Association will be accessible to your pipelines automatically.
-  # View these include files at https://git.drupalcode.org/project/gitlab_templates/
-  ################
   - project: $_GITLAB_TEMPLATES_REPO
     ref: $_GITLAB_TEMPLATES_REF
     file:
@@ -21,16 +6,6 @@ include:
       - '/includes/include.drupalci.variables.yml'
       - '/includes/include.drupalci.workflows.yml'
 
-################
-# Pipeline configuration variables
-#
-# These are the variables provided to the Run Pipeline form that a user may want to override.
-#
-# Docs at https://git.drupalcode.org/project/gitlab_templates/-/blob/main/includes/include.drupalci.variables.yml
-################
-
 variables:
-  # Opt-in to test against Drupal next minor version
-  OPT_IN_TEST_NEXT_MINOR: 1
-  # Opt-in to test against previous Drupal major version
-  OPT_IN_TEST_PREVIOUS_MAJOR: 1
+  # Allow dev dependencies
+  _LENIENT_ALLOW_LIST: "webpatches"
