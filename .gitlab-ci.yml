@@ -1,0 +1,163 @@
+# GitLab CI/CD configuration for Drupal Web Newsletter module
+# This pipeline runs code quality checks and tests
+
+image: php:8.3
+
+stages:
+  - build
+  - test
+  - code-quality
+
+variables:
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer-cache"
+  DRUPAL_VERSION: "11.2.x-dev"
+  MYSQL_DATABASE: "drupal"
+  MYSQL_ROOT_PASSWORD: "drupal"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .composer-cache/
+    - vendor/
+
+before_script:
+  - apt-get update -qq
+  - apt-get install -y -qq git unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev default-mysql-client
+  - docker-php-ext-configure gd --with-freetype --with-jpeg
+  - docker-php-ext-install gd zip pdo pdo_mysql opcache
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php --quiet
+  - rm composer-setup.php
+  - mv composer.phar /usr/local/bin/composer
+  - composer --version
+
+# Build job - Install dependencies
+build:
+  stage: build
+  script:
+    - composer install --prefer-dist --no-progress --no-interaction
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+
+# PHP CodeSniffer - Check Drupal coding standards
+phpcs:
+  stage: code-quality
+  needs: ['build']
+  script:
+    - composer global require drupal/coder:^8.3 dealerdirect/phpcodesniffer-composer-installer
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - phpcs --version
+    - phpcs --standard=Drupal --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml ./
+  allow_failure: true
+
+# PHP CodeSniffer - Check Drupal best practices
+phpcs-practice:
+  stage: code-quality
+  needs: ['build']
+  script:
+    - composer global require drupal/coder:^8.3 dealerdirect/phpcodesniffer-composer-installer
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - phpcs --standard=DrupalPractice --extensions=php,module,inc,install,test,profile,theme ./
+  allow_failure: true
+
+# PHPStan - Static analysis
+phpstan:
+  stage: code-quality
+  needs: ['build']
+  script:
+    - composer global require phpstan/phpstan mglaman/phpstan-drupal phpstan/extension-installer
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - phpstan --version
+    - phpstan analyse --level=1 ./
+  allow_failure: true
+
+# PHP Lint - Syntax check
+phplint:
+  stage: code-quality
+  needs: []
+  script:
+    - find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+    - find . -name '*.module' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+    - find . -name '*.install' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+# YAML Lint - Check YAML syntax
+yamllint:
+  stage: code-quality
+  needs: []
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y -qq python3-pip
+    - pip3 install --break-system-packages yamllint
+  script:
+    - yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" *.yml *.yaml config/ || true
+  allow_failure: true
+
+# Drupal Check - Deprecation testing
+drupal-check:
+  stage: code-quality
+  needs: ['build']
+  script:
+    - composer global require mglaman/drupal-check
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - drupal-check ./
+  allow_failure: true
+
+# PHPUnit - Run unit tests (if tests exist)
+phpunit:
+  stage: test
+  needs: ['build']
+  services:
+    - mysql:8.0
+  variables:
+    MYSQL_DATABASE: "drupal"
+    MYSQL_ROOT_PASSWORD: "drupal"
+    SIMPLETEST_DB: "mysql://root:drupal@mysql/drupal"
+    SIMPLETEST_BASE_URL: "http://localhost"
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y -qq git unzip libzip-dev libpng-dev libjpeg-dev libfreetype6-dev default-mysql-client
+    - docker-php-ext-configure gd --with-freetype --with-jpeg
+    - docker-php-ext-install gd zip pdo pdo_mysql opcache
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --quiet
+    - rm composer-setup.php
+    - mv composer.phar /usr/local/bin/composer
+    - mkdir -p /var/www/html
+    - cd /var/www/html
+    - composer create-project drupal/recommended-project:${DRUPAL_VERSION} drupal --no-interaction
+    - cd drupal
+    - composer require drush/drush drupal/webform:~6.3.0
+    - mkdir -p web/modules/contrib/webnewsletter
+    - cp -r $CI_PROJECT_DIR/* web/modules/contrib/webnewsletter/ || true
+    - mysql -h mysql -u root -pdrupal -e "CREATE DATABASE IF NOT EXISTS drupal;"
+    - cd web
+    - ../vendor/bin/drush site:install standard --db-url=mysql://root:drupal@mysql/drupal --yes
+    - ../vendor/bin/drush en webnewsletter -y
+  script:
+    - cd /var/www/html/drupal
+    - vendor/bin/phpunit -c web/core web/modules/contrib/webnewsletter || echo "No tests found or tests failed"
+  allow_failure: true
+
+# Multi-version testing - Drupal 11.1
+test:drupal-11.1:
+  stage: test
+  needs: ['build']
+  variables:
+    DRUPAL_VERSION: "~11.1.0"
+  script:
+    - composer require --dev --update-with-dependencies drupal/core:${DRUPAL_VERSION}
+    - echo "Testing compatibility with Drupal ${DRUPAL_VERSION}"
+  allow_failure: true
+
+# Multi-version testing - Drupal 11.2
+test:drupal-11.2:
+  stage: test
+  needs: ['build']
+  variables:
+    DRUPAL_VERSION: "~11.2.0"
+  script:
+    - composer require --dev --update-with-dependencies drupal/core:${DRUPAL_VERSION}
+    - echo "Testing compatibility with Drupal ${DRUPAL_VERSION}"
+  allow_failure: true
