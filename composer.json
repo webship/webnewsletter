@@ -27,7 +27,9 @@
   },
   "require": {
     "drupal/core": "~11.2.0",
-    "drupal/webpatches": "11.0.x-dev",
     "drupal/webform": "~6.3.0"
+  },
+  "require-dev": {
+    "drupal/webpatches": "dev-11.0.x"
   }
 }
