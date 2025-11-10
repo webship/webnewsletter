@@ -19,6 +19,10 @@
     "drupal": {
       "type": "composer",
       "url": "https://packages.drupal.org/8"
+    },
+    "webpatches": {
+      "type": "vcs",
+      "url": "https://git.drupalcode.org/project/webpatches.git"
     }
   },
   "require": {
