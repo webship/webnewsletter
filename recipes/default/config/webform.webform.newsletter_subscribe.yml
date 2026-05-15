@@ -65,7 +65,7 @@ settings:
   form_disable_back: false
   form_submit_back: false
   form_disable_autocomplete: false
-  form_novalidate: false
+  form_novalidate: true
   form_disable_inline_errors: false
   form_required: false
   form_autofocus: false
@@ -218,5 +218,49 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-handlers: {  }
+handlers:
+  webnewsletter_subscribe:
+    id: webnewsletter_subscribe
+    label: 'Newsletter Subscribe'
+    handler_id: webnewsletter_subscribe
+    status: true
+    conditions: []
+    weight: 0
+    settings: {}
+  email_confirmation:
+    id: email
+    label: 'Email Confirmation'
+    handler_id: email_confirmation
+    status: true
+    conditions: []
+    weight: 1
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:email:raw]'
+      to_options: {}
+      bcc_mail: ''
+      bcc_options: {}
+      cc_mail: ''
+      cc_options: {}
+      from_mail: _default
+      from_options: {}
+      from_name: _default
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: "You've subscribed to our newsletter"
+      body: "<p>Dear [webform_submission:values:name],</p>\n<p>Thank you for subscribing to our newsletter!</p>\n<p>Best regards,<br>The Team</p>"
+      excluded_elements: {}
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: false
+      theme_name: ''
+      parameters: {}
+      debug: false
 variants: {  }

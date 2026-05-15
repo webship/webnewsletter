@@ -16,12 +16,12 @@ use Drupal\webnewsletter\WebnewsletterEmailsInterface;
  * @ContentEntityType(
  *   id = "webnewsletter_emails",
  *   label = @Translation("Web Newsletter Emails"),
- *   label_collection = @Translation("Web Newsletter Emailss"),
+ *   label_collection = @Translation("Web Newsletter Emails"),
  *   label_singular = @Translation("web newsletter emails"),
- *   label_plural = @Translation("web newsletter emailss"),
+ *   label_plural = @Translation("web newsletter emails"),
  *   label_count = @PluralTranslation(
- *     singular = "@count web newsletter emailss",
- *     plural = "@count web newsletter emailss",
+ *     singular = "@count web newsletter emails",
+ *     plural = "@count web newsletter emails",
  *   ),
  *   handlers = {
  *     "list_builder" = "Drupal\webnewsletter\WebnewsletterEmailsListBuilder",
@@ -39,11 +39,11 @@ use Drupal\webnewsletter\WebnewsletterEmailsInterface;
  *   base_table = "webnewsletter_emails",
  *   revision_table = "webnewsletter_emails_revision",
  *   show_revision_ui = TRUE,
- *   admin_permission = "administer webnewsletter emails",
+ *   admin_permission = "administer web newsletter emails",
  *   entity_keys = {
  *     "id" = "id",
  *     "revision" = "revision_id",
- *     "label" = "id",
+ *     "label" = "email",
  *     "uuid" = "uuid",
  *     "owner" = "uid",
  *   },
@@ -53,7 +53,7 @@ use Drupal\webnewsletter\WebnewsletterEmailsInterface;
  *     "revision_log_message" = "revision_log",
  *   },
  *   links = {
- *     "collection" = "/admin/config/webnewsletter/emails/",
+ *     "collection" = "/admin/config/webnewsletter/emails",
  *     "add-form" = "/admin/config/webnewsletter/email/add",
  *     "canonical" = "/admin/config/webnewsletter/email/{webnewsletter_emails}",
  *     "edit-form" = "/admin/config/webnewsletter/email/{webnewsletter_emails}/edit",
@@ -73,7 +73,6 @@ class WebnewsletterEmails extends RevisionableContentEntityBase implements Webne
   public function preSave(EntityStorageInterface $storage) {
     parent::preSave($storage);
     if (!$this->getOwnerId()) {
-      // If no owner has been set explicitly, make the anonymous user the owner.
       $this->setOwnerId(0);
     }
   }
@@ -84,6 +83,60 @@ class WebnewsletterEmails extends RevisionableContentEntityBase implements Webne
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
 
     $fields = parent::baseFieldDefinitions($entity_type);
+
+    $fields['email'] = BaseFieldDefinition::create('email')
+      ->setRevisionable(TRUE)
+      ->setLabel(t('Email'))
+      ->setDescription(t('The email address of the subscriber.'))
+      ->setRequired(TRUE)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -10,
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'email_default',
+        'weight' => -10,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['name'] = BaseFieldDefinition::create('string')
+      ->setRevisionable(TRUE)
+      ->setLabel(t('Name'))
+      ->setDescription(t('The name of the subscriber.'))
+      ->setSetting('max_length', 255)
+      ->setDisplayOptions('view', [
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'string_textfield',
+        'weight' => -5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setRevisionable(TRUE)
+      ->setLabel(t('Status'))
+      ->setDescription(t('Whether the subscriber is active.'))
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayOptions('view', [
+        'type' => 'boolean',
+        'label' => 'above',
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('view', TRUE);
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setRevisionable(TRUE)

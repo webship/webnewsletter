@@ -4,7 +4,7 @@ entity.webnewsletter_emails.settings:
   route_name:  entity.webnewsletter_emails.settings
   parent: system.admin_structure
 entity.webnewsletter_emails.collection:
-  title: 'Web Newsletter Emailss'
-  description: 'List of web newsletter emailss.'
+  title: 'Web Newsletter Emails'
+  description: 'List of newsletter subscribers.'
   route_name: entity.webnewsletter_emails.collection
   parent: system.admin_content

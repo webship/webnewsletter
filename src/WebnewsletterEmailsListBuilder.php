@@ -59,7 +59,7 @@ class WebnewsletterEmailsListBuilder extends EntityListBuilder {
       ->count()
       ->execute();
 
-    $build['summary']['#markup'] = $this->t('Total web newsletter emailss: @total', ['@total' => $total]);
+    $build['summary']['#markup'] = $this->t('Total subscribers: @total', ['@total' => $total]);
     return $build;
   }
 
@@ -67,10 +67,10 @@ class WebnewsletterEmailsListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('ID');
-    $header['uid'] = $this->t('Author');
-    $header['created'] = $this->t('Created');
-    $header['changed'] = $this->t('Updated');
+    $header['email'] = $this->t('Email');
+    $header['name'] = $this->t('Name');
+    $header['status'] = $this->t('Status');
+    $header['created'] = $this->t('Subscribed');
     return $header + parent::buildHeader();
   }
 
@@ -79,13 +79,10 @@ class WebnewsletterEmailsListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\webnewsletter\WebnewsletterEmailsInterface $entity */
-    $row['id'] = $entity->toLink();
-    $row['uid']['data'] = [
-      '#theme' => 'username',
-      '#account' => $entity->getOwner(),
-    ];
+    $row['email'] = $entity->toLink($entity->get('email')->value);
+    $row['name'] = $entity->get('name')->value;
+    $row['status'] = $entity->get('status')->value ? $this->t('Active') : $this->t('Inactive');
     $row['created'] = $this->dateFormatter->format($entity->get('created')->value);
-    $row['changed'] = $this->dateFormatter->format($entity->getChangedTime());
     return $row + parent::buildRow($entity);
   }
 
