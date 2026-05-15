@@ -1,0 +1,9 @@
+name: Web Newsletter - Default
+description: A recipe to manage default installed modules, configs and permissions.
+type: install
+install:
+  - webform
+config:
+  strict: false
+  import:
+    webform: '*'
