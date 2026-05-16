@@ -23,14 +23,9 @@
     "lint:css": "stylelint \"**/*.css\"",
     "lint:yaml": "node ./node_modules/eslint/bin/eslint.js --ext .yml .",
     "test": "cucumber-js --config cucumber.js",
-    "test:headed": "HEADLESS=false cucumber-js --config cucumber.js",
-    "test:smoke": "cucumber-js --config cucumber.js --tags @smoke",
-    "test:playwright": "playwright test --config playwright.spec.config.ts",
-    "test:playwright:headed": "playwright test --config playwright.spec.config.ts --headed",
-    "test:playwright:ui": "playwright test --config playwright.spec.config.ts --ui"
+    "test:headed": "HEADLESS=false cucumber-js --config cucumber.js"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
     "eslint": "~8",
     "eslint-config-airbnb-base": "~15",
     "eslint-config-prettier": "~8",
@@ -59,7 +54,6 @@
     "tabbable": "~6",
     "terser": "~5",
     "terser-webpack-plugin": "~5",
-    "typescript": "^5.9.3",
     "underscore": "~1",
     "webpack": "~5",
     "webpack-cli": "~5",

@@ -5,6 +5,7 @@ namespace Drupal\webnewsletter\Plugin\WebformHandler;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Creates a newsletter subscriber entity on webform submission.
@@ -22,6 +23,22 @@ use Drupal\webform\WebformSubmissionInterface;
 class WebnewsletterSubscribeWebformHandler extends WebformHandlerBase {
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->currentUser = $container->get('current_user');
+    return $instance;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE) {
@@ -37,22 +54,19 @@ class WebnewsletterSubscribeWebformHandler extends WebformHandlerBase {
       return;
     }
 
-    $existing = \Drupal::entityTypeManager()
-      ->getStorage('webnewsletter_emails')
-      ->loadByProperties(['email' => $email]);
+    $storage = $this->entityTypeManager->getStorage('webnewsletter_emails');
 
+    $existing = $storage->loadByProperties(['email' => $email]);
     if (!empty($existing)) {
       return;
     }
 
-    $entity = \Drupal::entityTypeManager()
-      ->getStorage('webnewsletter_emails')
-      ->create([
-        'email' => $email,
-        'name' => $name,
-        'status' => TRUE,
-        'uid' => \Drupal::currentUser()->id(),
-      ]);
+    $entity = $storage->create([
+      'email' => $email,
+      'name' => $name,
+      'status' => TRUE,
+      'uid' => $this->currentUser->id(),
+    ]);
     $entity->save();
   }
 

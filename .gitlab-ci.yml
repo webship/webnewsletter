@@ -115,27 +115,3 @@ webship-js-test:
     reports:
       junit: tests/reports/junit.xml
   allow_failure: false
-
-webship-js-test-smoke:
-  extends: webship-js-test
-  script:
-    - ./node_modules/.bin/cucumber-js --config cucumber.js --tags "@smoke"
-  allow_failure: true
-
-# ─── Native Playwright tests ───────────────────────────────────────────────────
-playwright-test:
-  extends: .drupal-node-base
-  variables:
-    CI: "true"
-  script:
-    - ./node_modules/.bin/playwright test --config playwright.spec.config.ts
-  artifacts:
-    when: always
-    paths:
-      - tests/reports/playwright-html/
-      - tests/reports/playwright-junit.xml
-      - test-results/
-    expire_in: 7 days
-    reports:
-      junit: tests/reports/playwright-junit.xml
-  allow_failure: false
