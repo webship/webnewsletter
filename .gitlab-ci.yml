@@ -84,6 +84,12 @@ stylelint:
         --site-name="Web Newsletter Test"
         -y
     - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT en webform webnewsletter -y
+    # ── Exclude webform's optional CDN-hosted libraries ──────────────────────
+    # CodeMirror, Select2, Tippy, Popper and Tabby load from external CDNs on
+    # webform admin pages; those requests stall page load in the test browser.
+    # The module's own forms do not use them.
+    - '$CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT config:set webform.settings libraries.excluded_libraries "[choices, jquery.chosen, codemirror, jquery.select2, tabby, popperjs, tippyjs]" --input-format=yaml -y'
+    - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT cache:rebuild
     # ── Node.js 20 ──────────────────────────────────────────────────────────
     - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     - apt-get install -y nodejs
