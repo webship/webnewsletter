@@ -1,6 +1,6 @@
-Feature: Newsletter Subscribe Form
-  As an anonymous user
-  I want to subscribe to the newsletter
+Feature: Newsletter subscribe form
+  As an anonymous visitor
+  I want to subscribe to the newsletter from the public form
   So that I can receive newsletter updates
 
   Background:
@@ -21,30 +21,30 @@ Feature: Newsletter Subscribe Form
     Then I should see "Thank you for joining us"
      And the url should match "/"
 
-  Scenario: Duplicate email subscription is prevented
+  Scenario: Duplicate email submissions do not create duplicate subscribers
     Given I navigate to "/newsletter/subscribe"
       And I fill in "Webship Team" for "Name"
-      And I fill in "info@webship.co" for "Email"
+      And I fill in "duplicate@webship.co" for "Email"
       And I press "Subscribe"
      When I navigate to "/newsletter/subscribe"
       And I fill in "Another Name" for "Name"
-      And I fill in "info@webship.co" for "Email"
+      And I fill in "duplicate@webship.co" for "Email"
       And I press "Subscribe"
     Then I should see "Thank you for joining us"
 
-  Scenario: Subscribe form requires email
+  Scenario: Subscribe form requires the email field
     When I navigate to "/newsletter/subscribe"
      And I fill in "Test User" for "Name"
      And I press "Subscribe"
     Then I should see "field is required"
 
-  Scenario: Subscribe form requires name
+  Scenario: Subscribe form requires the name field
     When I navigate to "/newsletter/subscribe"
      And I fill in "rajabn@gmail.com" for "Email"
      And I press "Subscribe"
     Then I should see "field is required"
 
-  Scenario: Subscribe form validates email format
+  Scenario: Subscribe form rejects an invalid email address
     When I navigate to "/newsletter/subscribe"
      And I fill in "Test User" for "Name"
      And I fill in "not-a-valid-email" for "Email"

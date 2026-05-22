@@ -6,18 +6,32 @@ include:
       - "/includes/include.drupalci.variables.yml"
       - "/includes/include.drupalci.workflows.yml"
 
+variables:
+  COMPOSER_FLAGS: "--no-strict-lock"
+  COMPOSER_MEMORY_LIMIT: "-1"
+  # No yarn.lock is committed; Yarn 4 defaults to immutable installs and would
+  # refuse to create one. Allow lockfile creation in CI for every job.
+  YARN_ENABLE_IMMUTABLE_INSTALLS: "false"
+
+# Override the default composer job to use development versions
+composer:
+  variables:
+    DRUPAL_CORE: $CORE_SUPPORTED
+    IGNORE_PROJECT_DRUPAL_CORE_VERSION: 0
+
 cspell:
   stage: validate
-  image: node:18
+  image: node:20
   before_script:
     - npm install -g cspell
   script:
     - cspell "**/*.{php,module,inc,install,test,profile,theme,js,css,md,yml,txt}" --no-progress || true
   allow_failure: true
 
+# Node 20+ required: webship-js >=2.0 declares engines.node ">=20".
 eslint:
   stage: validate
-  image: node:18
+  image: node:20
   before_script:
     - corepack enable
     - yarn install
@@ -30,7 +44,7 @@ eslint:
 
 stylelint:
   stage: validate
-  image: node:18
+  image: node:20
   before_script:
     - corepack enable
     - yarn install
@@ -43,13 +57,16 @@ stylelint:
 # ─── Shared Drupal + Node.js setup for browser tests ──────────────────────────
 #
 # How it works:
-#   1. The drupalci `composer` job builds a full Drupal site and passes its
-#      artifact to this job via `needs: [composer]`.
+#   1. The drupalci `composer` job builds a full Drupal site (webnewsletter
+#      plus its dependencies) and passes its artifact to this job via
+#      `needs: [composer]`.
 #   2. This job runs inside the drupalci PHP-Apache image (inherited from
 #      `.testing-job-base`) which already has PHP, Apache, Drush, and MySQL.
 #   3. before_script installs Drupal + the module, then Node.js + yarn deps +
 #      Playwright Chromium. Test jobs only override `script:`.
-#   4. `DRUPAL_ADMIN_PASSWORD=admin` matches the password set by `drush si`.
+#   4. The `Webmaster` account is the site-install super-admin. Anonymous and
+#      admin scenarios use it directly; no per-role provisioning is required
+#      for the current newsletter suite.
 # ──────────────────────────────────────────────────────────────────────────────
 .drupal-node-base:
   extends: .testing-job-base
@@ -60,8 +77,8 @@ stylelint:
     - name: $_CONFIG_DOCKERHUB_ROOT/$_TARGET_DB_TYPE-$_TARGET_DB_VERSION:$_TARGET_DB_IMAGE_TAG
       alias: database
   variables:
-    DRUPAL_ADMIN_USERNAME: "admin"
-    DRUPAL_ADMIN_PASSWORD: "admin"
+    DRUPAL_ADMIN_USERNAME: "webmaster"
+    DRUPAL_ADMIN_PASSWORD: "dD.123123ddd"
     DRUPAL_TEST_BASE_URL: "http://localhost"
     LAUNCH_URL: "http://localhost"
     FORCE_COLOR: "1"
@@ -79,16 +96,17 @@ stylelint:
     # ── Drupal site install ─────────────────────────────────────────────────
     - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT site:install standard
         --db-url=$SIMPLETEST_DB
-        --account-name=admin
-        --account-pass=admin
+        --account-name=webmaster
+        --account-pass=dD.123123ddd
         --site-name="Web Newsletter Test"
         -y
-    - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT en webform webnewsletter -y
-    # ── Exclude webform's optional CDN-hosted libraries ──────────────────────
-    # CodeMirror, Select2, Tippy, Popper and Tabby load from external CDNs on
-    # webform admin pages; those requests stall page load in the test browser.
-    # The module's own forms do not use them.
-    - '$CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT config:set webform.settings libraries.excluded_libraries "[choices, jquery.chosen, codemirror, jquery.select2, tabby, popperjs, tippyjs]" --input-format=yaml -y'
+    # ── Module install ──────────────────────────────────────────────────────
+    # Enabling webnewsletter triggers its install hook, which applies the
+    # `recipes/default` recipe — that recipe installs webform and excludes
+    # the CDN-hosted optional libraries (codemirror/select2/tabby/popperjs/
+    # tippyjs) that would otherwise stall webform admin pages in the test
+    # browser. No separate `drush config:set` step is required.
+    - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT en webnewsletter -y
     - $CI_PROJECT_DIR/vendor/bin/drush --root=$CI_PROJECT_DIR/$_WEB_ROOT cache:rebuild
     # ── Node.js 20 ──────────────────────────────────────────────────────────
     - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -

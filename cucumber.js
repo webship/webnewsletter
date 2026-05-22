@@ -13,6 +13,50 @@ module.exports = {
     ],
     worldParameters: {
       launchUrl: process.env.LAUNCH_URL || 'http://localhost',
+      // Test users for each Drupal Standard profile role plus a newsletter
+      // subscriber-admin role.
+      //
+      // Webmaster is the site-install super-admin (created by `drush
+      // site:install ... --account-name=webmaster --account-pass=dD.123123ddd`).
+      // The rest are provisioned by `Given I add testing users` — see
+      // tests/step-definitions/webnewsletter.steps.js — which iterates this
+      // registry and skips entries flagged `isAdmin: true`. Each user also
+      // gets the per-user role permissions listed in `rolePermissions`,
+      // granted to their role via `user_role_grant_permissions` in the same
+      // step.
+      users: {
+        "Webmaster": {
+          "username": "webmaster",
+          "email": "webmaster@example.test",
+          "password": "dD.123123ddd",
+          "isAdmin": true,
+        },
+        "Newsletter admin": {
+          "username": "newsletter_admin_user",
+          "email": "newsletter_admin_user@example.test",
+          "password": "dD.123123ddd",
+          "roles": ["newsletter_admin"],
+          "rolePermissions": [
+            "administer web newsletter emails",
+            "create web newsletter emails",
+            "view web newsletter emails",
+            "edit web newsletter emails",
+            "delete web newsletter emails",
+          ],
+        },
+        "Content editor": {
+          "username": "content_editor_user",
+          "email": "content_editor_user@example.test",
+          "password": "dD.123123ddd",
+          "roles": ["content_editor"],
+        },
+        "Authenticated user": {
+          "username": "authenticated_user",
+          "email": "authenticated_user@example.test",
+          "password": "dD.123123ddd",
+          "roles": [],
+        },
+      },
       minWaitTime: {
         page: 3000,
         before_scenario: 0,

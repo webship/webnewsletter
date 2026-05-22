@@ -7,3 +7,14 @@ config:
   strict: false
   import:
     webform: '*'
+  actions:
+    webform.settings:
+      simpleConfigUpdate:
+        libraries.excluded_libraries:
+          - choices
+          - jquery.chosen
+          - codemirror
+          - jquery.select2
+          - tabby
+          - popperjs
+          - tippyjs
