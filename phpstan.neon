@@ -1,0 +1,24 @@
+parameters:
+    level: 0
+    fileExtensions:
+        - php
+        - module
+        - inc
+        - install
+        - theme
+        - profile
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # new static() is a best practice in Drupal, so we cannot fix that.
+        - "#^Unsafe usage of new static#"
+        -
+            # WebnewsletterEmailsListBuilder::__construct() follows the exact
+            # constructor signature Drupal core mandates for EntityListBuilder
+            # subclasses -- $entity_type, $storage, then extra services -- see
+            # \Drupal\Core\Entity\EntityListBuilder::__construct() and
+            # \Drupal\Core\Entity\EntityListBuilder::createInstance(). Core's
+            # own list builders (e.g. NodeListBuilder) use the identical
+            # pattern, so this is a false positive for classes that extend
+            # EntityListBuilder rather than injecting storage on their own.
+            identifier: drupal.entityStorageDirectInjection
+            path: src/WebnewsletterEmailsListBuilder.php

@@ -66,7 +66,8 @@ Feature: Admin subscriber management
       And I fill in "delete-target@webship.co" for "Email"
       And I fill in "Delete Target" for "Name"
       And I press "Save"
-    When I click "Delete"
+    When I click "top-bar-page-actions" by "aria-controls" attr
+     And I click "Delete"
      And I press "Delete" by "value" attr
     Then I should see "Web Newsletter Emails"
      And I should not see "Delete Target"

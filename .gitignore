@@ -1,6 +1,8 @@
 # Ignore node modules
 node_modules
 /*/node_modules
+.eslintcache
+.yarn/
 
 # Ignore local gitlab-ci-local runtime + sidecar config.
 # The canonical pipeline lives in .gitlab-ci.yml; the local CI is per-developer.
