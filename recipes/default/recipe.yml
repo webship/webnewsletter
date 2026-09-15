@@ -3,6 +3,8 @@ description: A recipe to manage default installed modules, configs and permissio
 type: install
 install:
   - webform
+  # Last, after its dependencies: the Web Newsletter module itself.
+  - webnewsletter
 config:
   strict: false
   import:
