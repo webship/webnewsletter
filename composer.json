@@ -3,7 +3,6 @@
   "description": "Simplifies the management of newsletter subscriptions, effortlessly engage your audience through effective newsletter campaigns.",
   "type": "drupal-module",
   "license": "GPL-2.0-or-later",
-  "minimum-stability": "dev",
   "authors": [
     {
       "name": "Webship",
