@@ -12,6 +12,7 @@ Feature: Admin login and per-role user provisioning
 
   Scenario: Webmaster can provision every other testing user
     Given I am a logged in user with the "Webmaster" user
+     And the testing roles and their permissions exist
     When I add testing users
      And I navigate to "/admin/people"
     Then I should see "webmaster"
